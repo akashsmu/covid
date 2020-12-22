@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import InfoBox from "./InfoBox";
 import Map from "./Map";
 import Table from "./Table";
-import sortedData from "./util";
+import { sortData as sortedData, prettyPrint } from "./util";
 import LineGraph from "./LineGraph";
 import "leaflet/dist/leaflet.css";
 
@@ -23,8 +23,8 @@ function App() {
     lat: 34.8076,
     lng: -40.4796,
   });
-  const [mapZoom, setmapZoom] = useState(1);
-
+  const [mapZoom, setmapZoom] = useState(3);
+  const [mapCountries, setmapCountries] = useState([]);
   useEffect(() => {
     fetch("https://disease.sh/v3/covid-19/all")
       .then((response) => response.json())
@@ -45,6 +45,7 @@ function App() {
 
           const sortData = sortedData(data);
           setTableData(sortData);
+          setmapCountries(data);
           setCountries(countries);
         });
     };
@@ -66,7 +67,7 @@ function App() {
         setCountryInfo(data);
 
         setmapCenter([data.countryInfo.lat, data.countryInfo.long]);
-        setmapZoom(4);
+        setmapZoom(6);
       });
   };
 
@@ -91,29 +92,34 @@ function App() {
         <div className="app_stats">
           <InfoBox
             title="Coronavirus Cases"
-            cases={countryInfo.todayCases}
+            cases={prettyPrint(countryInfo.todayCases)}
             total={countryInfo.cases}
           />
           <InfoBox
             title="Recovered"
-            cases={countryInfo.todayRecovered}
+            cases={prettyPrint(countryInfo.todayRecovered)}
             total={countryInfo.recovered}
           />
           <InfoBox
             title="Deaths"
-            cases={countryInfo.todayDeaths}
+            cases={prettyPrint(countryInfo.todayDeaths)}
             total={countryInfo.deaths}
           />
         </div>
 
-        <Map center={mapCenter} zoom={mapZoom} />
+        <Map
+          center={mapCenter}
+          countries={mapCountries}
+          casesType="recovered"
+          zoom={mapZoom}
+        />
       </div>
 
-      <Card className="app-right">
-        <CardContent>
+      <Card className="app_right">
+        <CardContent style={{ height: "100%" }}>
           <h3>Live Cases by Country</h3>
           <Table countries={TableData} />
-          <h3>WorldWide Cases</h3>
+          <h3>{country}</h3>
           <LineGraph />
         </CardContent>
       </Card>

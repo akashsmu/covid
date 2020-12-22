@@ -70,7 +70,7 @@ function LineGraph({ casesType = "cases" }) {
       await fetch("https://disease.sh/v3/covid-19/historical/all?lastdays=120")
         .then((response) => response.json())
         .then((data) => {
-          let chartData = buildData(data, "cases");
+          let chartData = buildData(data, casesType);
           setData(chartData);
         });
     };
