@@ -46,12 +46,12 @@ const options = {
   },
 };
 
-function LineGraph({ casesType = "cases" }) {
+function LineGraph({ casesType = "cases", ...props }) {
   const [data, setData] = useState([]);
 
-  const buildData = (data, casesType = "cases") => {
+  const buildData = (data, casesType = "recovered") => {
     const chartData = [];
-    let lastDataPoint;
+    let lastDataPoint = 0;
     for (let date in data[casesType]) {
       if (lastDataPoint) {
         const newDatapoint = {
@@ -78,8 +78,7 @@ function LineGraph({ casesType = "cases" }) {
   }, [casesType]);
 
   return (
-    <div>
-      <h1>HI HelLO</h1>
+    <div style={{ marginTop: "5%" }} className={props.className}>
       {data?.length > 0 && (
         <Line
           options={options}
